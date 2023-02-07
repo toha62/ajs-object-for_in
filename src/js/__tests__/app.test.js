@@ -1,82 +1,59 @@
-// import Bowerman from '../Bowerman';
-// import Character from '../Character';
+import sortObjProps from '../app';
 
-// test('should create instance of class Bowerman', () => {
-//   const result = new Bowerman('Robin Hood');
+const testObj = {
+  name: 'мечник', health: 10, level: 2, attack: 80, defence: 40,
+};
 
-//   expect(result).toBeInstanceOf(Bowerman);
-// });
+test.each([
+  [
+    testObj,
+    ['name', 'level'],
+    [
+      { key: 'name', value: 'мечник' },
+      { key: 'level', value: 2 },
+      { key: 'attack', value: 80 },
+      { key: 'defence', value: 40 },
+      { key: 'health', value: 10 },
+    ],
+  ],
+  [
+    testObj,
+    ['level', 'attack', 'health'],
+    [
+      { key: 'level', value: 2 },
+      { key: 'attack', value: 80 },
+      { key: 'health', value: 10 },
+      { key: 'defence', value: 40 },
+      { key: 'name', value: 'мечник' },
+    ],
+  ],
+])('should return a sorted array of object properties, given the second argument',
+  (obj, sortOrder, result) => {
+    expect(sortObjProps(obj, sortOrder)).toEqual(result);
+  });
 
-// test('should create instance of class Character', () => {
-//   const result = new Bowerman('Robin Hood');
+test('should return a sorted array of object properties, without the second argument', () => {
+  expect(sortObjProps(testObj)).toEqual([
+    { key: 'attack', value: 80 },
+    { key: 'defence', value: 40 },
+    { key: 'health', value: 10 },
+    { key: 'level', value: 2 },
+    { key: 'name', value: 'мечник' },
+  ]);
+});
 
-//   expect(result).toBeInstanceOf(Character);
-// });
+test('should return a sorted array of object properties, without inherited properties', () => {
+  const parentObject = {
+    experience: 50,
+  };
 
-// test('should create instance of class Bowerman with initial value', () => {
-//   const result = new Bowerman('Robin Hood');
+  Object.setPrototypeOf(testObj, parentObject);
 
-//   expect(result).toEqual({
-//     name: 'Robin Hood',
-//     type: 'Bowerman',
-//     health: 100,
-//     level: 1,
-//     attack: 25,
-//     defence: 25,
-//   });
-// });
-
-// test.each([
-//   [321321],
-//   [''],
-//   ['D'],
-//   ['Dark Knight'],
-// ])('should throws on uncorrect name: %s', (name) => {
-//   expect(() => {
-//     // eslint-disable-next-line no-new
-//     new Bowerman(name);
-//   }).toThrow();
-// });
-
-// test('should throw on levelUp() when health = 0', () => {
-//   expect(() => {
-//     const bowerman = new Bowerman('Robin Hood');
-//     bowerman.health = 0;
-//     bowerman.levelUp();
-//   }).toThrow();
-// });
-
-// test('should throw on damage() when health = 0', () => {
-//   expect(() => {
-//     const bowerman = new Bowerman('Robin Hood');
-//     bowerman.health = 0;
-//     bowerman.damage(10);
-//   }).toThrow();
-// });
-
-// test('should level up, increase attack, defence by 20% and icrease health to 100', () => {
-//   const bowerman = new Bowerman('Robin Hood');
-//   bowerman.health = 10;
-//   bowerman.level = 2;
-//   bowerman.attack = 20;
-//   bowerman.defence = 30;
-//   bowerman.levelUp();
-
-//   expect(bowerman.health).toBe(100);
-//   expect(bowerman.level).toBe(3);
-//   expect(bowerman.attack).toBe(24);
-//   expect(bowerman.defence).toBe(36);
-// });
-
-// test.each([
-//   [80, 20, 65],
-//   [10, 20, 0],
-// ])('should decrease health=%n by %n points depending on the defence level and got health=%n',
-//   (health, points, result) => {
-//     const bowerman = new Bowerman('Robin Hood');
-//     bowerman.health = health;
-//     bowerman.defence = 25;
-//     bowerman.damage(points);
-
-//     expect(bowerman.health).toBe(result);
-//   });
+  expect(sortObjProps(testObj, ['level'])).toEqual([
+    { key: 'level', value: 2 },
+    { key: 'attack', value: 80 },
+    { key: 'defence', value: 40 },
+    { key: 'health', value: 10 },
+    { key: 'name', value: 'мечник' },
+  ]);
+});
